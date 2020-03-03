@@ -5,25 +5,39 @@ mongoose.connect('mongodb://localhost/playground')
     .catch(err => console.error(err));
 
 const courseSchema = new mongoose.Schema({
-    name: String,
+    name: { type: String, required: true },
     author: String,
-    tags: [String],
+    tags: {
+        type: Array,
+        validate: {
+            validator: function (v) {
+                return v && v.length > 0;
+            },
+            message: 'A course should have at least one tag'
+        }
+    },
     date: { type: Date, default: Date.now },
-    isPublished: Boolean
+    isPublished: Boolean,
+    price: Number
 });
 
 const Course = mongoose.model('Course', courseSchema);
 
 async function createCourse() {
     const course = new Course({
-        name: 'Svelte',
-        author: 'Daniel Florez',
-        tags: ['Svelte', 'frontend'],
-        isPublished: true
+        name: 'Js',
+        author: 'Daniel',
+        tags: ['js', 'frontend'],
+        isPublished: true,
+        price: 10
     });
 
-    const result = await course.save();
-    console.log(result);
+    try {
+        const result = await course.save();
+        console.log(result);
+    } catch (ex) {
+        console.log(ex.message);
+    }
 }
 
 async function getCourses() {
@@ -73,7 +87,7 @@ async function removeCourse(id) {
     console.log(result);
 }
 
-// createCourse();
-updateCourse('5e5594fb3881b41b18c8f697');
-removeCourse('5e5594fb3881b41b18c8f697');
+createCourse();
+// updateCourse('5e5594fb3881b41b18c8f697');
+// removeCourse('5e5594fb3881b41b18c8f697');
 getCourses();
