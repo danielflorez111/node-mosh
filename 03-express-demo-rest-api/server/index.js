@@ -1,8 +1,10 @@
+const fetch = require('node-fetch');
 const config = require('config');
 const Joi = require('joi');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const logger = require('./logger');
+const logger = require('./server/logger');
+const test = require('./test');
 const express = require('express');
 const app = express();
 
@@ -21,6 +23,7 @@ if (app.get('env') === 'development') {
 }
 
 app.use(logger);
+test.print();
 
 const courses = [
     { id: 1, name: 'Course 1' },
